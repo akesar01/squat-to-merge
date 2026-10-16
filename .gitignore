@@ -1,0 +1,5 @@
+node_modules
+dist
+public/wasm
+videos/*.webm
+!videos/double-kettlebell-racked-squat-up-view-0-55s.webm

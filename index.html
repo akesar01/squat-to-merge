@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Rep Counter for Devs</title><link rel="stylesheet" href="/src/style.css"></head><body>
+<header><h1>Rep Counter for Devs</h1><span>pose detection runs in your browser (MediaPipe Pose Landmarker lite)</span></header>
+<main><div id="stage"><video id="v" playsinline muted></video><canvas id="c"></canvas></div>
+<aside><label>Exercise <select id="ex"><option value="pushup">Push-ups</option><option value="squat">Squats</option></select></label>
+<label>Reps to merge <input id="target" type="number" value="10" min="1"></label>
+<label><input id="keep" type="checkbox"> keep count across clips</label>
+<label>Sample video <select id="sample"><option value="">—</option></select></label>
+<label>Video file <input id="file" type="file" accept="video/*"></label><button id="cam">Use webcam</button><button id="reset">Reset</button>
+<div id="reps">0</div><div id="stats"></div><div id="gate">🔒 <b id="left">10</b> reps to merge</div><pre id="token" hidden></pre><div id="credit"></div></aside></main>
+<script type="module" src="/src/main.ts"></script></body></html>

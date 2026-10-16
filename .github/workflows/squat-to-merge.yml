@@ -1,0 +1,44 @@
+# Joke gate, not security: tokens are forgeable (the salt is public). See README.
+name: squat-to-merge
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+  issue_comment:
+    types: [created, edited]
+permissions:
+  contents: read
+  pull-requests: read
+  actions: write
+jobs:
+  sweat-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Collect PR body and comments
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          # Fetched live (not from the event payload) so a re-run sees new comments.
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq '.body // ""' > text.txt
+          gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" --jq '.[].body' >> text.txt
+      - name: Verify rep token
+        env:
+          TEXT_FILE: text.txt
+          MIN_REPS: "10"
+        run: node scripts/verify-token.mjs
+  # A comment can't attach a status to the PR's commit, so re-run the latest
+  # pull_request run of this PR instead; that run re-reads the comments.
+  rerun-on-comment:
+    if: github.event_name == 'issue_comment' && github.event.issue.pull_request && contains(github.event.comment.body, 'REPS-')
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.issue.number }}
+        run: |
+          branch=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR" --jq .head.ref)
+          id=$(gh run list -R "$GITHUB_REPOSITORY" --workflow squat-to-merge.yml --event pull_request --branch "$branch" --limit 1 --json databaseId --jq '.[0].databaseId')
+          echo "re-running run $id"
+          gh run rerun "$id" -R "$GITHUB_REPOSITORY"
