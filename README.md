@@ -28,3 +28,5 @@ No single clip here has 10 hand-countable reps. The demo token was earned with "
 5 kettlebell crush-grip push-ups plus the first 5 of 6 interval push-ups (both clips hand-counted, and the counter agreed).
 
 Videos: Wikimedia Commons. Licences and credits are in `videos/sources.json`.
+
+_Tested on itself: see the first PR._
